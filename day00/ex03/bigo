@@ -1,0 +1,2 @@
+best case O(1) for search, worst case O(n) n is the capacity
+O(n) space for storing n values
