@@ -1,6 +1,8 @@
 #ifndef HEADER_H
 # define HEADER_H
 
+#include <stdbool.h> 
+
 /*--------------------------------
   !! required structure
   --------------------------------*/
@@ -16,6 +18,15 @@ struct s_dict {
   int           capacity; //the capacity of the array 'items'
 };
 
+
+#define ARRAY_SIZE(a) sizeof(a)/sizeof(a[0]) 
+#define ALPHABET_SIZE (26) 
+#define CHAR_TO_INDEX(c) ((int)c - (int)'a') 
+struct trie_node 
+{ 
+    struct trie_node *children[ALPHABET_SIZE]; 
+    bool end; 
+}; 
 
 /*--------------------------------
   :) function you must implement
@@ -44,5 +55,7 @@ void readWordsFile(char ***pWords, int *pLenWords);
   &  your own other function
   --------------------------------*/
 
-
+struct trie_node  *init_trie(void);
+void              insert_trie(struct trie_node *root, char *key);
+bool              search_trie(struct trie_node *root, char *key);
 #endif

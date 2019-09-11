@@ -4,6 +4,7 @@
 #include <stdlib.h> //malloc, free, exit...
 
 #include "header.h"
+extern struct trie_node *word_tree; 
 
 int main(void)
 {
@@ -15,20 +16,31 @@ int main(void)
 	book = readBookFile();
 	readWordsFile(&words, &lenWords);
 	
+	
 	/*-------------------
 	launch your test here
 	--------------------*/
-	//struct s_dict *dict;
-	//
-	//dict = dictInit(lenWords);
-	//
-	//for (int i = 0; i < lenWords; i++)
-	//	dictInsert(dict, words[i], i);
-	//
-
+	struct s_dict *dict;
+	
+	dict = dictInit(lenWords);
+	word_tree = init_trie();
+	for (int i = 0; i < lenWords; i++)
+		insert_trie(word_tree, words[i]);
+	for (int i = 0; i < lenWords; i++)
+		dictInsert(dict, words[i], i);
+	char *str = compress(book, dict);
+	printf("<");
+	for (int i = 0; i < lenWords; i++)
+	{
+		if (i != 0)
+			printf(",");
+		printf("%s", words[i]);
+	}
+	printf(">");
+	printf("%s", str);
+	free(str);
 	return (0);
 }
-
 
 // Function used for the test
 // Don't go further :)
