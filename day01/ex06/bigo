@@ -1,2 +1,2 @@
-O 1 time 
+O n (list length) for the first time. O m(n) after first time 
 O n space
