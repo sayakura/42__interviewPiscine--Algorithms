@@ -25,4 +25,13 @@ struct s_city *getCities(void);
   --------------------------------*/
 
 
+struct s_item {
+  char          *word;
+  struct s_item *next;
+};
+
+struct s_stack {
+	struct s_item *item;
+};
+
 #endif
