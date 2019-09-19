@@ -5,18 +5,22 @@
 
 #include "header.h"
 
-int main(void)
+int main(int ac, char **av)
 {
-	int **map;
+	struct s_people **people;
+        int nbTable = 2;
+        int totalTime = 60;
 
-	map = readMap("map.txt");
+	people = readGuestList();
+        if (ac >= 2)
+                nbTable = atoi(av[1]);
+        if (ac >= 3)
+                totalTime = atoi(av[2]);
 
-	printMap(map);
 	/*-------------------
 	launch your test here
 	--------------------*/
-	sinkIsland(map, 1, 1);
-	printMap(map);
+	// printf("It is%s possible !\n", (isPossible(people, nbTable, totalTime)) ? "" : " NOT");
 
 	return (0);
 }
@@ -24,30 +28,19 @@ int main(void)
 // Function used for the test
 // Don't go further :)
 
-void	printMap(int **map)
-{
-	printf("map: \n");
-	for (int row = 0; map[row]; row++)
-	{
-		for (int col = 0; map[row][col] != -1; col++)
-		{
-			printf("%d ", map[row][col]);
-		}
-		printf("\n");
-	}
-}
-
 /*
 **	PARSING
 */
 
-char    *readFile(char *filename)
+#define FILENAME "guestList.txt"
+
+char    *readFile(void)
 {
         char *fcontent = NULL;
         int size = 0;
         FILE *fp;
 
-        if (NULL == (fp = fopen(filename, "r")))
+        if (NULL == (fp = fopen(FILENAME, "r")))
                 return (NULL);
         fseek(fp, 0L, SEEK_END);
         size = ftell(fp);
@@ -59,7 +52,7 @@ char    *readFile(char *filename)
         return (fcontent);
 }
 
-void    readMap_leave(void){
+void    readList_leave(void){
         dprintf(STDERR_FILENO, "failed to load the file.\n");
         exit(0);
 }
@@ -116,37 +109,33 @@ char    **split(char *str, char *delimiter){
         return (tab);
 }
 
-int **readMap(char *filename)
+struct s_people **readGuestList()
 {
-	int **map;
+        struct s_people **list;
         char *file;
         char **splitted;
         char **secondSplit;
-	int len2;
         int len;
 
         dprintf(STDOUT_FILENO, "(INFO) Loading the file... ");
-        if (NULL == (file = readFile(filename)))
-                readMap_leave();       
+        if (NULL == (file = readFile()))
+                readList_leave();    
         splitted = split(file, "\n");
         for (len = 0; splitted[len]; len++)
-                ;
-        if (!(map = malloc(sizeof(int *) * (len+1))))
-                readMap_leave();
-        len = 0;
+		;
+        list = malloc(sizeof(struct s_people *) * (len + 1));
+	list[0] = NULL;
         for (int i = 0; splitted[i]; i++)
         {
-                secondSplit = split(splitted[i], " ");
-		for (len2 = 0; secondSplit[len2]; len2++)
-			;
-		map[len] = malloc(sizeof(int) * (len2 + 1));
-		for (int a = 0; a < len2; a++){
-			map[len][a] = atoi(secondSplit[a]);
-		}
-		map[len][len2] = -1;
-                len += 1;
+                secondSplit = split(splitted[i], ":");
+                if (!(secondSplit && secondSplit[0] && secondSplit[1] && !secondSplit[2])) {
+                        dprintf(STDERR_FILENO, "error in the parsing!\n");
+                        exit(0);
+                }
+                list[i] = malloc(sizeof(struct s_people));
+                list[i]->name = secondSplit[0];
+                list[i]->time = atoi(secondSplit[1]);
         }
-	map[len] = NULL;
         printf("finish!\n");
-        return (map);
+        return (list);
 }
